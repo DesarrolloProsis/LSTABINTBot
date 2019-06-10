@@ -37,27 +37,44 @@ namespace LSTABINTBot
         }
         public async void CheckListas()
         {
-            using (var client = new HttpClient())
+            try
             {
-                var GetLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/GetListas"), null);
+                using (var client = new HttpClient())
+                {
+                    var GetLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/GetListas"), null);
 
-                var ReceiveLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/SendListas"),null);
+                    var ReceiveLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/SendListas"), null);
 
-                var FechaLastLista = await ReceiveLastLista.Content.ReadAsStringAsync();
+                    var FechaLastLista = await ReceiveLastLista.Content.ReadAsStringAsync();
+                }
             }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
         public async void CheckServiceTags()
         {
-            using (var client = new HttpClient())
+            try
             {
-                var GetOracleCount = await client.PostAsync(new Uri("http://localhost:87/Home/GetOracleTransactions"), null);
-                var GetSQLCount = await client.PostAsync(new Uri("http://localhost:87/Home/GetSQLTransactions"), null);
+                using (var client = new HttpClient())
+                {
+                    var GetOracleCount = await client.PostAsync(new Uri("http://localhost:87/Home/GetOracleTransactions"), null);
+                    var GetSQLCount = await client.PostAsync(new Uri("http://localhost:87/Home/GetSQLTransactions"), null);
 
-                var ReceiveOracleCount = await client.PostAsync(new Uri("http://localhost:87/Home/SendOracleTransactions"),null);
-                var ReceiveSQLCount = await client.PostAsync(new Uri("http://localhost:87/Home/SendSQLTransactions"), null);
+                    var ReceiveOracleCount = await client.PostAsync(new Uri("http://localhost:87/Home/SendOracleTransactions"), null);
+                    var ReceiveSQLCount = await client.PostAsync(new Uri("http://localhost:87/Home/SendSQLTransactions"), null);
 
-                var OracleCount = await ReceiveOracleCount.Content.ReadAsStringAsync();
-                var SQLCount = await ReceiveSQLCount.Content.ReadAsStringAsync();
+                    var OracleCount = await ReceiveOracleCount.Content.ReadAsStringAsync();
+                    var SQLCount = await ReceiveSQLCount.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception Ex)
+            {
+                
+                throw;
             }
         }
     }

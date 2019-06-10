@@ -21,6 +21,7 @@ namespace TestLSTABINTBot
         {
             LSTABINTBot.Service1 service = new LSTABINTBot.Service1();
             service.CheckListas();
+            service.CheckServiceTags();
         }
     }
 }
