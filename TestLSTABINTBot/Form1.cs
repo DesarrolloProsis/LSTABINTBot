@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Telegram.Bot;
 
 namespace TestLSTABINTBot
 {
@@ -20,8 +21,7 @@ namespace TestLSTABINTBot
         private void Btn_Inicio_Click(object sender, EventArgs e)
         {
             LSTABINTBot.Service1 service = new LSTABINTBot.Service1();
-            service.CheckListas();
-            service.CheckServiceTags();
+            service.Inicio();
         }
     }
 }
