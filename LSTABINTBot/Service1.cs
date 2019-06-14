@@ -44,24 +44,25 @@ namespace LSTABINTBot
             timer.Enabled = true;
             timer.Start();
         }
-        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             timer.Enabled = false;
             try
             {
-                CheckListas();
-                CheckServiceTags();
-                timer.Enabled = true;
+                var LSTABINTWorking = await CheckListas();
+                var ServiceTagsWorking = await CheckServiceTags();
                 intervalos++;
-                if (intervalos == 24)
+                if (intervalos == 14 && (LSTABINTWorking && ServiceTagsWorking))
                 {
-                    Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     intervalos = 0;
                 }
+                timer.Enabled = true;
+
             }
             catch (Exception Ex)
             {
-                Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.Message , Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.Message );
                 timer.Enabled = true;
                 throw;
             }
@@ -70,7 +71,7 @@ namespace LSTABINTBot
         protected override void OnStop()
         {
         }
-        public async void CheckListas()
+        public async Task<bool> CheckListas()
         {
             try
             {
@@ -80,7 +81,7 @@ namespace LSTABINTBot
 
                     var ReceiveLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoListas"), null);
 
-                    VerifyLSTABINTSevice(await ReceiveLastLista.Content.ReadAsStringAsync());
+                    return VerifyLSTABINTSevice(await ReceiveLastLista.Content.ReadAsStringAsync());
                 }
             }
             catch (Exception ex)
@@ -89,14 +90,19 @@ namespace LSTABINTBot
             }
 
         }
-        public void VerifyLSTABINTSevice(string DateLastLista)
+        public bool VerifyLSTABINTSevice(string DateLastLista)
         {
             if (Convert.ToDateTime(DateLastLista) < DateTime.Now.AddMinutes(-30))
             {
                 Bot.SendTextMessageAsync(-364639169, "Las LSTABINT no han sido actualizadas desde *" + DateLastLista + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
-        public async void CheckServiceTags()
+        public async Task<bool> CheckServiceTags()
         {
             try
             {
@@ -106,7 +112,11 @@ namespace LSTABINTBot
 
                     var ReceiveLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoListas"), null);
 
-                    VerifyServiceTags(await ReceiveLastRegister.Content.ReadAsStringAsync());
+                    var LastRegister = await ReceiveLastRegister.Content.ReadAsStringAsync();
+
+                    var Verificado = Convert.ToBoolean(await VerifyServiceTags(LastRegister));
+
+                    return Verificado;
                 }
             }
             catch (Exception Ex)
@@ -115,14 +125,19 @@ namespace LSTABINTBot
                 throw;
             }
         }
-        public void VerifyServiceTags(string DateLastRegister)
+        public async Task<bool> VerifyServiceTags(string DateLastRegister)
+
         {
             if (Convert.ToDateTime(DateLastRegister) < DateTime.Now.AddMinutes(-30))
             {
-                CompareTransacciones(DateLastRegister);
+                return Convert.ToBoolean(await CompareTransacciones(DateLastRegister));
+            }
+            else
+            {
+                return true;
             }
         }
-        public async void CompareTransacciones(string LastRegister)
+        public async Task<bool> CompareTransacciones(string LastRegister)
         {
             using (var client = new HttpClient())
             {
@@ -138,8 +153,12 @@ namespace LSTABINTBot
                 if (OracleCount != SQLCount)
                 {
                     await Bot.SendTextMessageAsync(-364639169, "ServiceTags no funciona desde: *" + LastRegister + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    return false;
                 }
-
+                else
+                {
+                    return true;
+                }
             }
         }
     }
