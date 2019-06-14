@@ -21,7 +21,7 @@ namespace LSTABINTBot
     {
 
         private System.Timers.Timer timer = null;
-
+        int intervalos;
         private static readonly TelegramBotClient Bot = new TelegramBotClient("834404388:AAG8JcPTHi9API16h1TF5C_EgsB78QToaP8");
         public Service1()
         {
@@ -52,6 +52,12 @@ namespace LSTABINTBot
                 CheckListas();
                 CheckServiceTags();
                 timer.Enabled = true;
+                intervalos++;
+                if (intervalos == 24)
+                {
+                    Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    intervalos = 0;
+                }
             }
             catch (Exception Ex)
             {
@@ -131,7 +137,7 @@ namespace LSTABINTBot
 
                 if (OracleCount != SQLCount)
                 {
-                    await Bot.SendTextMessageAsync(-364639169, "Las LSTABINT no han sido actualizadas desde *" + LastRegister + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await Bot.SendTextMessageAsync(-364639169, "ServiceTags no funciona desde: *" + LastRegister + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
 
             }
