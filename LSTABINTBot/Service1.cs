@@ -131,7 +131,7 @@ namespace LSTABINTBot
 
                 if (OracleCount != SQLCount)
                 {
-                    await Bot.SendTextMessageAsync(-364639169, "Las LSTABINT no han sido actualizadas desde *" + LastRegister + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await Bot.SendTextMessageAsync(-364639169, "ServiceTags no funciona desde: *" + LastRegister + "*", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
 
             }

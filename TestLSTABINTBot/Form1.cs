@@ -22,6 +22,7 @@ namespace TestLSTABINTBot
         {
             LSTABINTBot.Service1 service = new LSTABINTBot.Service1();
             service.Inicio();
+            Btn_Inicio.Enabled = false;
         }
     }
 }
