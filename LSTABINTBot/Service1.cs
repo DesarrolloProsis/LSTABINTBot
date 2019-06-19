@@ -52,7 +52,7 @@ namespace LSTABINTBot
                 var LSTABINTWorking = await CheckListas();
                 var ServiceTagsWorking = await CheckServiceTags();
                 intervalos++;
-                if (intervalos == 14 && (LSTABINTWorking && ServiceTagsWorking))
+                if (intervalos == 36 && (LSTABINTWorking && ServiceTagsWorking))
                 {
                     await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     intervalos = 0;
