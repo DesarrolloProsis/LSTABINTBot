@@ -110,7 +110,7 @@ namespace LSTABINTBot
                 {
                     var GetLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/GetHistoricoTags"), null);
 
-                    var ReceiveLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoListas"), null);
+                    var ReceiveLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoTags"), null);
 
                     var LastRegister = await ReceiveLastRegister.Content.ReadAsStringAsync();
 
