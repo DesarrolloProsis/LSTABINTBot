@@ -52,7 +52,7 @@ namespace LSTABINTBot
                 var LSTABINTWorking = await CheckListas();
                 var ServiceTagsWorking = await CheckServiceTags();
                 intervalos++;
-                if (intervalos == 14 && (LSTABINTWorking && ServiceTagsWorking))
+                if (intervalos >= 14 && (LSTABINTWorking && ServiceTagsWorking))
                 {
                     await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     intervalos = 0;
@@ -64,7 +64,6 @@ namespace LSTABINTBot
             {
                 await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.Message );
                 timer.Enabled = true;
-                throw;
             }
 
         }
@@ -86,7 +85,6 @@ namespace LSTABINTBot
             }
             catch (Exception ex)
             {
-                throw;
             }
 
         }
@@ -122,7 +120,6 @@ namespace LSTABINTBot
             catch (Exception Ex)
             {
 
-                throw;
             }
         }
         public async Task<bool> VerifyServiceTags(string DateLastRegister)
