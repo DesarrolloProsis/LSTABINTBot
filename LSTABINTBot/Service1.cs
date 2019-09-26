@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.ServiceProcess;
@@ -47,6 +48,7 @@ namespace LSTABINTBot
         private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             timer.Enabled = false;
+            timer.Stop();
             try
             {
                 var LSTABINTWorking = await CheckListas();
@@ -58,34 +60,33 @@ namespace LSTABINTBot
                     intervalos = 0;
                 }
                 timer.Enabled = true;
+                timer.Start();
 
             }
             catch (Exception Ex)
             {
-                await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.Message );
+                await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.StackTrace);
                 timer.Enabled = true;
+                timer.Start();
             }
 
         }
         protected override void OnStop()
         {
+            File.WriteAllText(@"C:\temporal\LSTABINTBotStopped.txt", "Se detuvo");     
         }
         public async Task<bool> CheckListas()
         {
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    var GetLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/GetHistoricoListas"), null);
 
-                    var ReceiveLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoListas"), null);
-
-                    return VerifyLSTABINTSevice(await ReceiveLastLista.Content.ReadAsStringAsync());
-                }
-            }
-            catch (Exception ex)
+            using (var client = new HttpClient())
             {
+                var GetLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/GetHistoricoListas"), null);
+
+                var ReceiveLastLista = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoListas"), null);
+
+                return VerifyLSTABINTSevice(await ReceiveLastLista.Content.ReadAsStringAsync());
             }
+
 
         }
         public bool VerifyLSTABINTSevice(string DateLastLista)
@@ -102,28 +103,20 @@ namespace LSTABINTBot
         }
         public async Task<bool> CheckServiceTags()
         {
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
-                {
-                    var GetLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/GetHistoricoTags"), null);
+                var GetLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/GetHistoricoTags"), null);
 
-                    var ReceiveLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoTags"), null);
+                var ReceiveLastRegister = await client.PostAsync(new Uri("http://localhost:87/Home/SendHistoricoTags"), null);
 
-                    var LastRegister = await ReceiveLastRegister.Content.ReadAsStringAsync();
+                var LastRegister = await ReceiveLastRegister.Content.ReadAsStringAsync();
 
-                    var Verificado = Convert.ToBoolean(await VerifyServiceTags(LastRegister));
+                var Verificado = Convert.ToBoolean(await VerifyServiceTags(LastRegister));
 
-                    return Verificado;
-                }
-            }
-            catch (Exception Ex)
-            {
-
+                return Verificado;
             }
         }
         public async Task<bool> VerifyServiceTags(string DateLastRegister)
-
         {
             if (Convert.ToDateTime(DateLastRegister) < DateTime.Now.AddMinutes(-30))
             {
