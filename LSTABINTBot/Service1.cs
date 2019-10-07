@@ -56,7 +56,7 @@ namespace LSTABINTBot
                 intervalos++;
                 if (intervalos >= 36 && (LSTABINTWorking && ServiceTagsWorking) && DateTime.Now.Hour > 9)
                 {
-                    await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente LSTABINTService y ServiceTags", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     intervalos = 0;
                 }
                 timer.Enabled = true;
@@ -65,7 +65,7 @@ namespace LSTABINTBot
             }
             catch (Exception Ex)
             {
-                await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.StackTrace);
+                await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :( : " + Ex.StackTrace);
                 intervalos = 36;
                 timer.Enabled = true;
                 timer.Start();
