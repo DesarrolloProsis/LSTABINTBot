@@ -32,7 +32,7 @@ namespace LSTABINTBot
         public void Inicio()
         {
             timer = new System.Timers.Timer();
-            timer.Interval = 300000;
+            timer.Interval = 30000;
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
             timer.Start();
@@ -54,7 +54,7 @@ namespace LSTABINTBot
                 var LSTABINTWorking = await CheckListas();
                 var ServiceTagsWorking = await CheckServiceTags();
                 intervalos++;
-                if (intervalos >= 14 && (LSTABINTWorking && ServiceTagsWorking))
+                if (intervalos >= 36 && (LSTABINTWorking && ServiceTagsWorking) && DateTime.Now.Hour > 9)
                 {
                     await Bot.SendTextMessageAsync(-364639169, "Funcionando correctamente todos los servicios", Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     intervalos = 0;
@@ -66,6 +66,7 @@ namespace LSTABINTBot
             catch (Exception Ex)
             {
                 await Bot.SendTextMessageAsync(-364639169, "Oh oh, algo salió mal con el bot que monitorea los servicios, que ironía :(: " + Ex.StackTrace);
+                intervalos = 36;
                 timer.Enabled = true;
                 timer.Start();
             }
